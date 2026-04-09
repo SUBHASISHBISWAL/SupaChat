@@ -79,7 +79,7 @@ FROM
     public.articles a
 CROSS JOIN 
     generate_series(
-        CURRENT_DATE - INTERVAL '30 days',
+        CURRENT_DATE - INTERVAL '120 days',
         CURRENT_DATE,
         '1 day'::interval
     ) AS gen_date;

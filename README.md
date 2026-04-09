@@ -25,6 +25,15 @@ The database logic is wrapped heavily in Supabase RPCs bridging read-only querie
 | Infra       | Docker, Nginx, GitHub Actions |
 | Monitoring  | Prometheus, Grafana, Loki     |
 
+## 📚 Documentation
+For a complete, in-depth breakdown of the project, please explore the `docs/` folder:
+- [Architecture Details](docs/1-architecture.md)
+- [Local Setup Guide](docs/2-setup.md)
+- [Deployment (AWS EC2)](docs/3-deployment.md)
+- [CI/CD Pipeline](docs/4-cicd.md)
+- [Monitoring Stack](docs/5-monitoring.md)
+- [AI Tools & NLP Logic](docs/6-ai-tools.md)
+
 ## 🚀 Quick Start
 ### Prerequisites
 - Node.js > 20
