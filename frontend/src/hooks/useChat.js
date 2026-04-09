@@ -15,7 +15,9 @@ export function useChat() {
     if (!text.trim() || isLoading) return;
 
     const userMessage = {
-      id: crypto.randomUUID(),
+      id: typeof crypto !== 'undefined' && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : Date.now().toString(36) + Math.random().toString(36).substring(2),
       role: 'user',
       content: text.trim(),
     };
