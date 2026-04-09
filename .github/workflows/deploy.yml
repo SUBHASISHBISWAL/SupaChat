@@ -82,9 +82,10 @@ jobs:
           docker pull ${{ secrets.DOCKER_USER }}/supachat-nginx:latest
           
           # We edit the compose file dynamically to use the pulled images instead of building
-          sed -i "s|build:.*|image: ${{ secrets.DOCKER_USER }}/supachat-backend:latest|g" docker-compose.yml
-          sed -i "s|context: .*||g" docker-compose.yml
-          sed -i "s|dockerfile: .*||g" docker-compose.yml
+          sed -i 's|.*context: ./backend.*|    image: ${{ secrets.DOCKER_USER }}/supachat-backend:latest|g' docker-compose.yml
+          sed -i 's|.*context: \..*|    image: ${{ secrets.DOCKER_USER }}/supachat-nginx:latest|g' docker-compose.yml
+          sed -i '/build:/d' docker-compose.yml
+          sed -i '/dockerfile:/d' docker-compose.yml
           
           # Restart services safely
           docker compose up -d --remove-orphans
