@@ -1,0 +1,92 @@
+# ==============================================================================
+# SupaChat .gitignore
+# Stack: Python (FastAPI) · JavaScript (React + Vite) · Docker · Node.js
+# ==============================================================================
+
+# ── Secrets & Environment ──────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+.installed.cfg
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+.virtualenv/
+
+# Test, lint, type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.lcov
+
+# ── Node / JavaScript ─────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite build output (generated — not source)
+frontend/dist/
+frontend/.vite/
+
+# Optional: lock files (keep package-lock.json in repo for reproducible builds)
+# yarn.lock
+# pnpm-lock.yaml
+
+# ── Docker ─────────────────────────────────────────────────────────────────────
+# Don't ignore docker-compose files — they are source
+# Ignore any local override compose files
+docker-compose.override.yml
+
+# ── Monitoring / Data Volumes ─────────────────────────────────────────────────
+# Grafana and Prometheus may write local data — ignore those folders
+monitoring/grafana/data/
+monitoring/prometheus/data/
+monitoring/loki/data/
+/tmp/
+
+# ── OS Artifacts ──────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── IDE & Editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+ref/

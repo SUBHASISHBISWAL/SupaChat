@@ -1,0 +1,94 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' # Only deploy on merge to main
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Build and push Backend
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./backend/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USER }}/supachat-backend:latest
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USER }}/supachat-backend:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_USER }}/supachat-backend:buildcache,mode=max
+
+    - name: Build and push Nginx/Frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./nginx/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USER }}/supachat-nginx:latest
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USER }}/supachat-nginx:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_USER }}/supachat-nginx:buildcache,mode=max
+
+  deploy:
+    name: Deploy to SSH Instance
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository format for compose
+      uses: actions/checkout@v4
+      
+    - name: Copy docker-compose to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "docker-compose.yml"
+        target: "~/supachat"
+
+    - name: Execute deployment on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/supachat
+          
+          # Ensure env vars are loaded (assumes .env is seeded on instance manually for secrets)
+          
+          # Pull latest images
+          docker pull ${{ secrets.DOCKER_USER }}/supachat-backend:latest
+          docker pull ${{ secrets.DOCKER_USER }}/supachat-nginx:latest
+          
+          # We edit the compose file dynamically to use the pulled images instead of building
+          sed -i "s|build:.*|image: ${{ secrets.DOCKER_USER }}/supachat-backend:latest|g" docker-compose.yml
+          sed -i "s|context: .*||g" docker-compose.yml
+          sed -i "s|dockerfile: .*||g" docker-compose.yml
+          
+          # Restart services safely
+          docker compose up -d --remove-orphans
+          
+          # Basic post-deploy healthcheck hook
+          sleep 10
+          docker ps

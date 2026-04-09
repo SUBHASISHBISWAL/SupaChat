@@ -1,0 +1,67 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": { "defaults": { "min": 0 }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "rate(supachat_requests_total[5m])", "legendFormat": "{{status}} {{method}} {{endpoint}}", "refId": "A" }
+      ],
+      "title": "Requests Throughput (Status Code)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "rate(supachat_request_duration_seconds_sum[5m]) / rate(supachat_request_duration_seconds_count[5m])", "legendFormat": "{{endpoint}}", "refId": "A" }
+      ],
+      "title": "Avg Request Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "supachat_llm_duration_seconds_sum / supachat_llm_duration_seconds_count", "legendFormat": "Avg LLM Time", "refId": "A" },
+        { "expr": "supachat_query_duration_seconds_sum / supachat_query_duration_seconds_count", "legendFormat": "Avg SQL Time", "refId": "B" }
+      ],
+      "title": "Pipeline Latency Breakdown",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 4,
+      "options": { "showTime": true, "wrapLogMessage": true },
+      "targets": [
+        { "expr": "{job=\"containerlogs\"} |= \"backend\"", "refId": "A" }
+      ],
+      "title": "Backend Application Logs",
+      "type": "logs"
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["supachat"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "SupaChat Operations Dashboard",
+  "uid": "supachat_ops",
+  "version": 1,
+  "weekStart": ""
+}
