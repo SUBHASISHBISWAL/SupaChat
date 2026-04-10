@@ -47,7 +47,7 @@
       "id": 4,
       "options": { "showTime": true, "wrapLogMessage": true },
       "targets": [
-        { "expr": "{job=\"containerlogs\"} |= \"backend\"", "refId": "A" }
+        { "expr": "{job=\"containerlogs\", container_name=\"supachat_backend\"}", "refId": "A" }
       ],
       "title": "Backend Application Logs",
       "type": "logs"
