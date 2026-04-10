@@ -23,7 +23,7 @@ structlog.configure(
     ],
     logger_factory=structlog.stdlib.LoggerFactory(),
 )
-logging.basicConfig(level=get_settings().LOG_LEVEL)
+logging.basicConfig(format="%(message)s", level=get_settings().LOG_LEVEL)
 logger = structlog.get_logger(__name__)
 
 # -----------------------------------------------------------------------------
