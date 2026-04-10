@@ -19,21 +19,11 @@ structlog.configure(
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
         structlog.processors.JSONRenderer()
     ],
-    wrapper_class=structlog.stdlib.BoundLogger,
-    logger_factory=structlog.PrintLoggerFactory(),
-    cache_logger_on_first_use=True,
+    logger_factory=structlog.stdlib.LoggerFactory(),
 )
-
-# Route stdlib logging (uvicorn, httpx) through structlog for uniform JSON output
-logging.basicConfig(
-    format="%(message)s",
-    level=get_settings().LOG_LEVEL,
-    handlers=[logging.StreamHandler()],
-)
+logging.basicConfig(level=get_settings().LOG_LEVEL)
 logger = structlog.get_logger(__name__)
 
 # -----------------------------------------------------------------------------
